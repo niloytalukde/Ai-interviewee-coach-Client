@@ -6,24 +6,20 @@ import { Button } from "@/components/ui/button";
 import img from "../../assets/AiImage.png"
 import toast from "react-hot-toast";
 const StartInterview = () => {
-  const vapi = new Vapi("8e7c8512-40b9-4fc1-8dde-bfc8236dfadf");
+const vapi = new Vapi("8e7c8512-40b9-4fc1-8dde-bfc8236dfadf");
 const [isMuted, setIsMuted] = useState(false);
-
+const [activeUser,setActiveUser]=useState(false)
   const candidateName = questionStore((state) => state.candidateName);
   const session = questionStore((state) => state.session);
-
   useEffect(() => {
     console.log("Candidate:", candidateName);
     console.log("Session:", session);
   }, [candidateName, session]);
-
   const startCall = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const questionList = session?.questions.map((item, index) => {
+    const questionList = session?.questions.map((item, _index) => {
       return item.question + ",";
     });
-
-
     try {
       console.log("Hello VApi");
       await vapi.start({
@@ -109,6 +105,15 @@ const muteCall = () => {
   });
 };
 
+vapi.on("speech-start",()=>{
+  console.log("Started Speech");
+   setActiveUser(false)
+})
+
+vapi.on("speech-end",()=>{
+  console.log("Started Speech");
+   setActiveUser(true)
+})
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -130,13 +135,13 @@ const muteCall = () => {
           <img
             src={img}
             alt="AI Recruiter"
-            className="w-20 h-20 rounded-full object-cover mb-3"
+            className={`w-20 h-20 rounded-full object-cover mb-3 ${!activeUser&&"animate-ping" }`}
           />
-          <p className="font-medium text-gray-800">AI Recruiter</p>
+          <p className="font-medium text-gray-800">7 Recruiter</p>
         </div>
-
         {/* Candidate */}
         <div className="bg-white rounded-xl shadow-sm h-95 flex flex-col items-center justify-center">
+           
           <div className="w-20 h-20 rounded-full object-cover  bg-blue-600 flex items-center justify-center text-white text-xl font-semibold mb-3">
             {candidateName}
           </div>
