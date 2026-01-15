@@ -10,14 +10,18 @@ import { Link, useParams } from "react-router";
 
 const InterviewBoard = () => {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const params =useParams()
   const id = params.id
-    const {getSession,session,setCandidateName}=questionStore()
+    const {getSession,session,setCandidateInfo}=questionStore()
   const handleStart = () => {
     if (!name.trim()) return alert("Please enter your name");
     console.log("Candidate Name:", name);
     // navigate to interview flow
-setCandidateName(name)
+    setCandidateInfo({name,email})
+    if(!id){
+      return 
+    }
     getSession(id)
   };
  
@@ -69,6 +73,15 @@ setCandidateName(name)
             className="mt-2"
             value={name}
             onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+          <div className="mt-2">
+          <label className="text-sm font-medium">Enter your Email</label>
+          <Input
+            placeholder="e.g.,jhon@gmail.com"
+            className="mt-2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 

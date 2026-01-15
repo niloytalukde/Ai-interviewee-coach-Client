@@ -9,22 +9,21 @@ const StartInterview = () => {
 const vapi = new Vapi("8e7c8512-40b9-4fc1-8dde-bfc8236dfadf");
 const [isMuted, setIsMuted] = useState(false);
 const [activeUser,setActiveUser]=useState(false)
-  const candidateName = questionStore((state) => state.candidateName);
+  const candidateInfo = questionStore((state) => state.candidateInfo);
   const session = questionStore((state) => state.session);
   useEffect(() => {
-    console.log("Candidate:", candidateName);
+    console.log("Candidate:", candidateInfo.name , candidateInfo.email );
     console.log("Session:", session);
-  }, [candidateName, session]);
+  }, [candidateInfo , session]);
   const startCall = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const questionList = session?.questions.map((item, _index) => {
       return item.question + ",";
     });
     try {
-      console.log("Hello VApi");
       await vapi.start({
         name: "AI Recruiter",
-        firstMessage: `Hi ${candidateName} how are you? Ready for your interview on ${session?.jobType} ?`,
+        firstMessage: `Hi ${candidateInfo.name} how are you? Ready for your interview on ${session?.jobType} ?`,
         transcriber: {
           provider: "deepgram",
           model: "nova-2",
@@ -36,7 +35,7 @@ const [activeUser,setActiveUser]=useState(false)
         },
         model: {
           provider: "openai",
-          model: "gpt-4o", // Updated model
+          model: "gpt-4o", 
           temperature: 0.7,
           messages: [
             {
@@ -91,13 +90,7 @@ When all questions are completed, say:
       console.error("Error starting call:", error);
     }
   };
-
-  const stopCall = () => {
-    toast.success("You End The Call")
-    console.log("call End SuccessFully");
-    vapi.stop();
-  };
-
+  
 const muteCall = () => {
   setIsMuted((prev) => {
     vapi.setMuted(!prev);
@@ -113,6 +106,15 @@ vapi.on("speech-start",()=>{
 vapi.on("speech-end",()=>{
   console.log("Started Speech");
    setActiveUser(true)
+})
+
+const stopCall=()=>{
+  vapi.stop()
+console.log("Call Stop ");
+}
+
+vapi.on("message",(message)=>{
+  console.log(message);
 })
 
   return (
@@ -143,9 +145,9 @@ vapi.on("speech-end",()=>{
         <div className="bg-white rounded-xl shadow-sm h-95 flex flex-col items-center justify-center">
            
           <div className="w-20 h-20 rounded-full object-cover  bg-blue-600 flex items-center justify-center text-white text-xl font-semibold mb-3">
-            {candidateName}
+            {candidateInfo.name}
           </div>
-          <p className="font-medium text-gray-800">{candidateName}</p>
+          <p className="font-medium text-gray-800">{candidateInfo.name}</p>
         </div>
       </div>
 

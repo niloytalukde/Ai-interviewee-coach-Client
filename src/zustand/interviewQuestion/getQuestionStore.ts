@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { create } from "zustand";
-import api from "../axios/baseApi";
-
 type QuestionItem = {
   question: string;
   type: string;
@@ -16,35 +13,45 @@ type InterviewSession = {
   questions: QuestionItem[];
 };
 
+type CandidateInfo = {
+  name: string;
+  email: string;
+};
+
 type QuestionStore = {
   session: InterviewSession | null;
   feedback: any[];
   loading: boolean;
   error: string | null;
-  candidateName: string
+  candidateInfo: CandidateInfo;
 
   fetchQuestion: (data: any) => Promise<void>;
   fetchFeedback: (payload: any) => Promise<void>;
-  getSession: (payload: any) => Promise<void>;
-setCandidateName: (name: string) => void;
-  
+  getSession: (id: string) => Promise<void>;
+  setCandidateInfo: (payload: CandidateInfo) => void;
 };
+
+
+import { create } from "zustand";
+import api from "../axios/baseApi";
 
 const questionStore = create<QuestionStore>((set) => ({
   session: null,
   feedback: [],
   loading: false,
   error: null,
-  candidateName: "",
+
+  candidateInfo: {
+    name: "",
+    email: "",
+  },
 
   fetchQuestion: async (data) => {
     set({ loading: true, error: null });
-
     try {
       const res = await api.post("/api/v1/interview/start-interview", data);
-
       set({
-        session: res.data?.data, // ✅ FULL OBJECT
+        session: res.data?.data ?? null,
         loading: false,
       });
     } catch (error: any) {
@@ -57,12 +64,10 @@ const questionStore = create<QuestionStore>((set) => ({
 
   fetchFeedback: async (payload) => {
     set({ loading: true, error: null });
-
     try {
       const res = await api.post("/api/v1/interview/feedback", payload);
-
       set({
-        feedback: res.data?.data || [],
+        feedback: res.data?.data ?? [],
         loading: false,
       });
     } catch (error: any) {
@@ -73,14 +78,12 @@ const questionStore = create<QuestionStore>((set) => ({
     }
   },
 
-getSession: async (id:string) => {
-  set({ loading: true, error: null });
-
-  try {
-    const res = await api.get(`/api/v1/interview/single-session/${id}`);
-
+  getSession: async (id: string) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await api.get(`/api/v1/interview/single-session/${id}`);
       set({
-        session: res.data?.data || [],
+        session: res.data?.data ?? null,
         loading: false,
       });
     } catch (error: any) {
@@ -91,9 +94,10 @@ getSession: async (id:string) => {
     }
   },
 
-  setCandidateName: (name: string) => set({ candidateName: name }),
-
+  setCandidateInfo: ({ name, email }) =>
+    set({
+      candidateInfo: { name, email },
+    }),
 }));
 
 export default questionStore;
-// /single-session
