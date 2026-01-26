@@ -5,6 +5,7 @@ import Dashboard from "@/Pages/User/Dashboard";
 import InterviewLinks from "@/Pages/User/InterviewLinks";
 import ScheduledInterview from "@/Pages/User/ScheduledInterview";
 import ShortlistedCandidates from "@/Pages/User/ShortlistedCandidates";
+import ShortlistedCv from "@/Pages/User/ShortlistedCv";
 import CreateLink from "@/Pages/User/_component/CreateLink";
 
 export const userSidebarItems=[
@@ -18,14 +19,19 @@ export const userSidebarItems=[
           Component:Dashboard
         },
           {
-          title: "Shortlisted Candidates",
-          url: "/user/shortlisted-candidates",
-          Component:ShortlistedCandidates
+          title: "Shortlisted CV",
+          url: "/user/shortlisted-cv",
+          Component:ShortlistedCv
         },
         {
           title: "Scheduled Interview",
           url: "/user/scheduled-interview",
           Component:ScheduledInterview
+        },
+         {
+          title: "ShortlistedCandidates",
+          url: "/user/shortlisted-candidates",
+          Component:ShortlistedCandidates
         },
          {
           title: "All Interviews",
